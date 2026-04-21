@@ -1,5 +1,6 @@
 const express = require('express')
 const modelo = require('./modelo.js');
+const { registrarVoto } = require('./voteService');
 
 const app = express()
 app.use(express.json());
@@ -58,8 +59,20 @@ app.post('/respostas', (req, res) => {
   } 
 });
 
-// espera e trata requisições de clientes
-const port = 5000;
+// espera e trata requisições de clientes - NOVA ROTA SOLID
+
+app.post('/vote', (req, res) => {
+  try {
+    const { perguntaId, tipo } = req.body;
+
+    registrarVoto(perguntaId, tipo, modelo);
+
+    res.json({ mensagem: "Voto registrado com sucesso" });
+  }
+  catch(erro) {
+    res.status(500).json(erro.message); 
+  }
+});
 app.listen(port, 'localhost', () => {
   console.log(`ESM Forum rodando em ${port}`)
 });
